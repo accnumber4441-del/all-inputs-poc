@@ -1,0 +1,30 @@
+name: "PoC: ALL_INPUTS Secret Leakage"
+on:
+  workflow_dispatch:
+
+jobs:
+  poc:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # needed for some action features; keep minimal
+    steps:
+      # ── STEP 1: Run the FORKED action with a fake API key ──
+      - name: Run forked claude-code-action
+          uses: accnumber4441-del/claude-code-action@main
+        with:
+          # Fake key — no real Anthropic API key needed.
+          # The action will fail later (invalid key), but the dump
+          # step runs FIRST and proves ALL_INPUTS contains all inputs.
+          anthropic_api_key: "sk-ant-POC-DEMO-LEAKED-KEY-12345678"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: "print hello world"
+
+      # ── STEP 2: Upload the proof ──
+      - name: Upload proof artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-inputs-proof
+          path: /tmp/all_inputs_dump.txt
+          if-no-files-found: warn
