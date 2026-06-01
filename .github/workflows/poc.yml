@@ -11,7 +11,7 @@ jobs:
     steps:
       # ── STEP 1: Run the FORKED action with a fake API key ──
       - name: Run forked claude-code-action
-          uses: accnumber4441-del/claude-code-action@main
+        uses: accnumber4441-del/claude-code-action@main
         with:
           # Fake key — no real Anthropic API key needed.
           # The action will fail later (invalid key), but the dump
